@@ -7,15 +7,31 @@
 	#SingleInstance Force
 	#UseHook
 	;#NoTrayIcon
+
+	; A_IconHidden := true
+
+	; if (A_IconHidden := true)
+	; {
+	; 	A_IconHidden := false
+	; }
+	; else
+	; {
+	; 	return
+	; }
 	
 	#SuspendExempt
+
+	;Fallos del teclado
+  ;:*:gm::m
+  
+	;vk4D::a
 	
 	;Libera las teclas modificadoras en caso aparezcan como pulsadas.
 	`::
 	 {
 		Send "{Shift Up}"
-			Send "{Ctrl Up}"
-			Send "{Alt Up}"
+		Send "{Ctrl Up}"
+		Send "{Alt Up}"
 		Send "{RWin Up}"
 		Send "{LWin Up}" 
 		Return
@@ -186,7 +202,7 @@
 	
 	;Seccion de acentos español/ingles/aleman: Lwin.
 	;—————————————————————————————————————————————————————
-		#HotIf GetKeyState("RWin", "P")
+		#HotIf GetKeyState("LWin", "P")
 		{
 			;Acentos del español
 			a::á
@@ -217,7 +233,7 @@
 	
 	;Seccion de simbolos variados: Rwin.
 	;—————————————————————————————————————————————————————
-		#HotIf GetKeyState("LWin", "P")
+		#HotIf GetKeyState("RWin", "P")
 		{
 			'::"
 			,::send "{<}"
