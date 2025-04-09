@@ -33,7 +33,7 @@ Esc:: ; -> toca empezar siempre desde Dvorak.
 }
 
 
-;           --- Liberar teclas modificadoras ---
+;          --- Liberar teclas modificadoras + 'Reload' ---
 ;==================================================================
 /*`::
 	{
@@ -45,6 +45,7 @@ Esc:: ; -> toca empezar siempre desde Dvorak.
 		Return
 	}*/
 	
+`::Reload
 
 ;               --- Suspender en BrawlStars ---
 ;==================================================================
@@ -218,8 +219,14 @@ Space::
 	
 ;      --- 'LAlt' para acentos español/ingles/aleman ---
 ;==================================================================
+;ESTA LA OPCION DE USAR UN CONMUTADOR PARA CAMBIAR ENTRE CAPAS.
 #HotIf GetKeyState("LAlt", "P")
 {
+	/* RAlt= {
+		conmutador
+	}
+		if (Ralt=1) {
+	*/
 	;Acentos del español
 	a::á
 	o::ó
@@ -245,6 +252,19 @@ Space::
 	+,::Ö
 	+p::Ü
 	+s::ẞ
+	/* } */
+
+	/*
+	if (Ralt=2) {
+		acentos en aleman, y asi sucesivamente
+		}
+
+		Ralt= capa base '0'
+		return
+
+		CLARO: tambien esta la opcion del modificador + tecla. 
+		¡¡Tambien se puede usar las telas "',.p" para cambiar de idioma en vez de Ralt
+	*/
 }
 
 ;           --- 'RAlt' para simbolos variados ---
@@ -256,28 +276,28 @@ Space::
 	.::send "{>}"
 	p::send "{@}"
 	y::send "{#}"
-	f::send "{¿}"
-	g::send "{?}"
+	f::send "{``}"
+	g::send "{|}"
 	c::send "{\}"
 	r::send "{^}"
 	l::
 	{
 		Send "{RAlt Up}"
 		Sleep 10
-		Send "{``}"
+		Send "{%}"
 		KeyWait "l"
 		Send "{RAlt Up}"
 		Return
 	}
 	
-	a::send "{(}"
-	o::send "{)}"
-	e::send "{{}"
-	u::send "{}}"
-	i::send "{%}"
-	d::send "{|}"
-	h::send "{_}"
-	t::send "{—}"
+	a::send "{_}"
+	o::send "{—}"
+	e::send "{(}"
+	u::send "{{}}"
+	i::send "{¿}"
+	d::send "{?}"
+	h::send "{}}"
+	t::send "{)}"
 	n::send "{[}"
 	s::send "{]}"
 	
@@ -402,11 +422,16 @@ Space::
 	;Atajos y teclas especiales
 	e::Shift
 	u::Ctrl
-	o::Alt	
+	o::Alt
+	
+	i::%
+	x::×
+	y::÷
 }
 
 ;          --- 'Tecla/s' para teclas de función ---
 ;==================================================================
 
-;      --- 'Tab' para pad numérico + modificadoras ---
+;      --- 'Tecla/s' para emojis ---
 ;==================================================================
+;PUEDO USAR UN CONMUTADOR PARA ALTERNAR ENTRE CAPAS. 
