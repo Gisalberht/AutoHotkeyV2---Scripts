@@ -1,9 +1,7 @@
 ;==================================================================
-; SCRIPTS DE INICO PARA DVORAK, MOUSE Y TECLADO
+; SCRIPTS DE INICO CAMBIAR ENTRE LAYOUTS.
 ;==================================================================
-;Descripcion: Script que permite utiliar un teclado 60% convencional, como un teclado 40% con sistema de capas, usando la distribucion Dvorak.
-
-
+;Descripcion: Permite cambiar entre layouts Dvorak y Qwerty con un scritp para cada uno.
 
 ;                       --- Directivas ---
 ;==================================================================
@@ -44,10 +42,10 @@ Esc:: ; -> toca empezar siempre desde Dvorak.
 		Return
 	}*/
 	
-; `::Reload
+3::Reload
 `::Suspend
 Enter::Ctrl
-\::Tab
+\::Alt
 =::Tab
 RControl::RAlt
 
@@ -106,13 +104,12 @@ LAlt::{ ; Tecla de activacion de la capa de acentos.
 	 Send "{RAlt Up}"
 	 Return
 	} 
-	
-	
+		
 	;           --- CAPA PRINCIPAL DVORAK EN ESPAÑOL --- 
 	;==================================================================
-	h::r
-	r::h
-	/::BackSpace
+	SC24::SC18 ;J > O = H > R en Dvorak
+	SC18::SC24 ;O > J = R > H en Dvorak
+	SC1A::BackSpace
 	LCtrl::Lwin
 	LWin::{
 		Send "{LAlt Down}"
@@ -243,11 +240,33 @@ Space::
 ;ESTA LA OPCION DE USAR UN CONMUTADOR PARA CAMBIAR ENTRE CAPAS.
 #HotIf GetKeyState("LAlt", "P")
 {
+
+	;mantener precionado Lalt y usar Ralt como conmutador de capas de idiomas
 	/* RAlt= {
 		conmutador
 	}
 		if (Ralt=1) {
+			acentos en español
+	}
+	if (Ralt=2) {
+		acentos en aleman
+		}
+
+		y asi sucesivamente...
+		
+		Ralt=0 --> capa base, para salir y reiniciar
+		return
+
+		o puede tener autosave para cambiar la capa de acentos base.
+-------------
+		CLARO: tambien esta la opcion del modificador + tecla. 
+		mantener presionado Lalt e ir tocando la tecla hasta optener el acento deseado
+		y luego soltar para que salga el simbolo, es mas practico, con cuadro de seleccion de acentos.
+
+		¡¡Tambien se puede usar las telas "',.p" para cambiar de idioma en vez de Ralt, pero esto solo sirve en dvorak, habría que cambiarlo para cada distro a menos que se usen los scancodes.
 	*/
+
+	
 	;Acentos del español
 	a::á
 	o::ó
@@ -273,65 +292,52 @@ Space::
 	+,::Ö
 	+p::Ü
 	+s::ẞ
-	/* } */
-
-	/*
-	if (Ralt=2) {
-		acentos en aleman, y asi sucesivamente
-		}
-
-		Ralt= capa base '0'
-		return
-
-		CLARO: tambien esta la opcion del modificador + tecla. 
-		¡¡Tambien se puede usar las telas "',.p" para cambiar de idioma en vez de Ralt
-	*/
 }
 
 ;           --- 'RAlt' para simbolos variados ---
 ;==================================================================
 #HotIf GetKeyState("RAlt", "P")
 {
-	'::"
-	,::send "{<}"
-	.::send "{>}"
-	p::send "{@}"
-	y::send "{#}"
-	f::send "{``}"
-	g::send "{|}"
-	c::send "{\}"
-	r::send "{^}"
-	l::
-	{
+	SC10::" ;Q
+	SC11::send "{<}"  ;W
+	SC12::send "{>}"  ;E
+	SC13::send "{@}"  ;R
+	SC14::send "{#}"  ;T
+	SC15::send "{``}" ;Y
+	SC16::send "{|}"  ;U
+	SC17::send "{\}"  ;I
+	SC18::send "{^}"  ;O
+	SC19::send "%"    ;P
+	/*{
 		Send "{RAlt Up}"
 		Sleep 10
 		Send "{%}"
 		KeyWait "l"
 		Send "{RAlt Up}"
 		Return
-	}
+	}*/
 	
-	a::send "{_}"
-	o::send "{—}"
-	e::send "{{}"
-	u::send "{(}"
-	i::send "{¿}"
-	d::send "{?}"
-	h::send "{)}"
-	t::send "{}}"
-	n::send "{[}"
-	s::send "{]}"
+	SC1E::send "{_}" ;A
+	SC1F::send "{—}" ;S
+	SC20::send "{{}" ;D
+	SC21::send "{(}" ;F
+	SC22::send "{¿}" ;G
+	SC23::send "{?}" ;H
+	SC24::send "{)}" ;J
+	SC25::send "{}}" ;K
+	SC26::send "{[}" ;L
+	SC27::send "{]}" ;; o Ñ
 	
-	`;::send "{:}"
-	q::send "{$}"
-	j::send "{&}"
-	k::send "{=}"
-	x::send "{¡}"
-	b::send "{!}"
-	m::send "{~}"
-	w::send "{°}"
-	v::send "{·}"
-	;z::send "{}"
+	SC2C::send "{:}" ;Z
+	SC2D::send "{$}" ;X
+	SC2E::send "{&}" ;C
+	SC2F::send "{=}" ;V
+	SC30::send "{¡}" ;B
+	SC31::send "{!}" ;N
+	SC32::send "{~}" ;M
+	SC33::send "{°}" ;,
+	SC34::send "{·}" ;.
+	;SC35::send "{}" ;/ o -
 }
 
 ;        --- Mouse virtual: Space +	Scrolllock ---
@@ -339,31 +345,31 @@ Space::
 #HotIf GetKeyState("Space", "P") and GetKeyState("ScrollLock", "T")
 {
 	;Teclas de desplazamiento para mover el cursor del mouse velocidad baja.
-	+c::MouseMove 0, -2, 0, "R"   ; Mover hacia arriba
-	+t::MouseMove 0, 2, 0, "R"   ; Mover hacia abajo
-	+h::MouseMove -2, 0, 0, "R"   ; Mover hacia la izquierda
-	+n::MouseMove 2, 0, 0, "R"   ; Mover hacia la derecha
+	+SC17::MouseMove 0, -2, 0, "R"   ;I -> Mover hacia arriba
+	+SC25::MouseMove 0, 2, 0, "R"   ;K -> Mover hacia abajo
+	+SC24::MouseMove -2, 0, 0, "R"   ;J -> Mover hacia la izquierda
+	+SC26::MouseMove 2, 0, 0, "R"   ;L -> Mover hacia la derecha
 	
 	;Teclas de desplazamiento para mover el cursor del mouse velocidad media.
-	c::MouseMove 0, -10, 0, "R"   ; Mover hacia arriba
-	t::MouseMove 0, 10, 0, "R"   ; Mover hacia abajo
-	h::MouseMove -10, 0, 0, "R"   ; Mover hacia la izquierda
-	n::MouseMove 10, 0, 0, "R"   ; Mover hacia la derecha
+	SC17::MouseMove 0, -10, 0, "R"   ;I -> Mover hacia arriba
+	SC25::MouseMove 0, 10, 0, "R"   ;K -> Mover hacia abajo
+	SC24::MouseMove -10, 0, 0, "R"   ;J -> Mover hacia la izquierda
+	SC26::MouseMove 10, 0, 0, "R"   ;L -> Mover hacia la derecha
 	
 	;Teclas de desplazamiento para mover el cursor del mouse velocidad alta.
-	^c::MouseMove 0, -50, 0, "R"   ; Mover hacia arriba
-	^t::MouseMove 0, 50, 0, "R"   ; Mover hacia abajo
-	^h::MouseMove -50, 0, 0, "R"   ; Mover hacia la izquierda
-	^n::MouseMove 50, 0, 0, "R"   ; Mover hacia la derecha
+	^SC17::MouseMove 0, -50, 0, "R"   ;I -> Mover hacia arriba
+	^SC25::MouseMove 0, 50, 0, "R"   ;K -> Mover hacia abajo
+	^SC24::MouseMove -50, 0, 0, "R"   ;J -> Mover hacia la izquierda
+	^SC26::MouseMove 50, 0, 0, "R"   ;L -> Mover hacia la derecha
 	
 	;Bototes y scroll del mouse.	
-	g::LButton
-	r::RButton
-	w::MButton
-	z::WheelRight
-	v::WheelLeft
-	s::WheelDown
-	l::WheelUp
+	SC16::LButton   	;U
+	SC18::RButton 		;O
+	SC33::MButton 		;,
+	SC35::WheelRight  ;/ o -
+	SC34::WheelLeft 	;.
+	SC27::WheelDown   ;; o Ñ
+	SC19::WheelUp     ;P
 }
 
 ;     --- 'Space' para capa de movimiento/desplazamiento ---
@@ -371,36 +377,36 @@ Space::
 #HotIf GetKeyState("Space", "P") and ElapsedTime => 200
 {
 	;Desplazamiento
-	h::Left    
-	n::Right
-	c::Up
-	t::Down
-	g::Home
-	r::End
-	l::PgUp
-	s::PgDn
-	m::#^Left
-	;w::
-	;v::
-	z::#^Right
+	SC24::Left 				;J
+	SC26::Right 			;L
+	SC017::Up 				;I
+	SC25::Down 				;K
+	SC16::Home 				;U
+	SC18::End 				;O
+	SC19::PgUp 				;P
+	SC27::PgDn 				;; o Ñ
+	SC32::#^Left 			;M
+	;SC33:: 					;,
+	;SC34:: 					;.
+	SC35::#^Right 		;/ o -
 	
 	;Atajos y modificaciones
-	/::BackSpace
-	f::Delete
-	d::Insert
-	'::^z
-	,::^c
-	.::^v
-	p::#v
-	a::^y
-	x::^x
-	e::Shift
-	u::Ctrl
-	o::Alt
-	q::PrintScreen
-	k::AppsKey
+	SC1A::BackSpace   ;´--> sirve en Qwerty para dejar libre la tilde para los acentos.
+	SC15::Delete      ;Y
+	SC23::Insert      ;H
+	SC10::^z 					;Q
+	SC11::^c 					;W
+	SC12::^v 					;E
+	SC13::#v 					;R
+	SC1E::^y 					;A
+	SC30::^x 					;B
+	SC20::Shift 			;D
+	SC21::Ctrl        ;F
+	SC1F::Alt         ;S
+	SC2D::PrintScreen ;X
+	SC2F::AppsKey     ;V
 	
-	b:: ;Activar y desactivar 'Scrolllock'
+	SC31:: ; N -> Activar y desactivar 'Scrolllock'
 	{  
 		estado_actual_scrollock := GetKeyState("ScrollLock", "T")
 		SetScrollLockState !estado_actual_scrollock  
@@ -424,32 +430,32 @@ Space::
 #HotIf GetKeyState("Tab", "P")
 {
 	;Numeros del numpad.	
-	b::Numpad0
-	m::Numpad1
-	w::Numpad2
-	v::Numpad3
-	h::Numpad4
-	t::Numpad5
-	n::Numpad6
-	g::Numpad7
-	c::Numpad8
-	r::Numpad9
+	SC31::Numpad0 ;N
+	SC32::Numpad1 ;M
+	SC33::Numpad2 ;,
+	SC34::Numpad3 ;.
+	SC24::Numpad4 ;J
+	SC25::Numpad5 ;K
+	SC26::Numpad6 ;L
+	SC16::Numpad7 ;U
+	SC17::Numpad8 ;I
+	SC18::Numpad9 ;O
 	
 	;Simbolos del numpad.
-	f::+
-	d::-
-	l::*
-	s::/
-	z::=
+	SC15::+       ;Y
+	SC23::-       ;H
+	SC19::* 			;P
+	SC27::/ 			;; o Ñ
+	SC35::= 			;/ o -
 	
 	;Atajos y teclas especiales
-	e::Shift
-	u::Ctrl
-	o::Alt
+	SC20::Shift 	;D
+	SC21::Ctrl 		;F
+	SC1F::Alt 		;S
 	
-	i::%
-	x::×
-	y::÷
+	SC22::% 			;G
+	SC30::× 			;B
+	SC14::÷ 			;T
 }
 
 ;          --- 'Tecla/s' para teclas de función ---
