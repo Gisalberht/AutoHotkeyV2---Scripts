@@ -34,7 +34,7 @@ Esc:: ; -> toca empezar siempre desde Dvorak.
 
 ;          --- Liberar teclas modificadoras + 'Reload' ---
 ;==================================================================
-/*`::
+4::
 	{
 		Send "{Shift Up}"
 		Send "{Ctrl Up}"
@@ -42,32 +42,15 @@ Esc:: ; -> toca empezar siempre desde Dvorak.
 		Send "{RWin Up}"
 		Send "{LWin Up}" 
 		Return
-	}*/
+	}
 	
-; `::Reload
-+`::Suspend
+`::Suspend
 Enter::Ctrl
 \::Tab
 =::Tab
 RControl::RAlt
 
-;               --- Suspender en BrawlStars ---
-;==================================================================
-/*#space::Return
-
-SetTimer BrawlStars, 500
-	BrawlStars()
-	{
-		if WinActive("ahk_class Qt5154QWindowIcon")
-		{
-			Suspend true
-		}
-		else
-		{
-			Suspend false
-		}
-		Return
-	}*/
+3::Reload
 
 
 ;          --- Fijar ventana: autor desconocido ---
@@ -94,12 +77,12 @@ SetTimer BrawlStars, 500
 ;       --- Enmascaramiento de las teclas de Windows ---
 ;==================================================================
 
-LAlt::{ ; Tecla de activacion de la capa de acentos.
-	Send "{Blind}{vkE8}"
-	KeyWait "LAlt"
-	Send "{LAlt Up}"
-	Return
- } 
+LAlt::return  ;{ ; Tecla de activacion de la capa de acentos.
+; 	Send "{Blind}{vkE8}"
+; 	KeyWait "LAlt" 
+; 	Send "{LAlt Up}"
+; 	Return
+;  } 
  RAlt::{ ;Tecla  activacion de la capa de simbolos.
 	 Send "{Blind}{vkE8}"
 	 KeyWait "RAlt"
@@ -273,7 +256,7 @@ Space::
 	+,::Ö
 	+p::Ü
 	+s::ẞ
-	/* } */
+	/* } */ 
 
 	/*
 	if (Ralt=2) {
@@ -287,6 +270,7 @@ Space::
 		¡¡Tambien se puede usar las telas "',.p" para cambiar de idioma en vez de Ralt
 	*/
 }
+#HotIf 
 
 ;           --- 'RAlt' para simbolos variados ---
 ;==================================================================

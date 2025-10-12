@@ -28,11 +28,11 @@ Esc:: ; -> toca empezar siempre desde Dvorak.
 	Sleep 200
 	Suspend
 	return
-}
+} 
 
 ;          --- Liberar teclas modificadoras + 'Reload' ---
 ;==================================================================
-/*`::
+4::
 	{
 		Send "{Shift Up}"
 		Send "{Ctrl Up}"
@@ -40,7 +40,7 @@ Esc:: ; -> toca empezar siempre desde Dvorak.
 		Send "{RWin Up}"
 		Send "{LWin Up}" 
 		Return
-	}*/
+	}
 	
 3::Reload
 `::Suspend
@@ -48,25 +48,6 @@ Enter::Ctrl
 \::Alt
 =::Tab
 RControl::RAlt
-
-;               --- Suspender en BrawlStars ---
-;==================================================================
-/*#space::Return
-
-SetTimer BrawlStars, 500
-	BrawlStars()
-	{
-		if WinActive("ahk_class Qt5154QWindowIcon")
-		{
-			Suspend true
-		}
-		else
-		{
-			Suspend false
-		}
-		Return
-	}*/
-
 
 ;          --- Fijar ventana: autor desconocido ---
 ;==================================================================
@@ -98,12 +79,20 @@ LAlt::{ ; Tecla de activacion de la capa de acentos.
 	Send "{LAlt Up}"
 	Return
  } 
- RAlt::{ ;Tecla  activacion de la capa de simbolos.
-	 Send "{Blind}{vkE8}"
-	 KeyWait "RAlt"
-	 Send "{RAlt Up}"
-	 Return
-	} 
+;  RAlt::{ ;Tecla  activacion de la capa de simbolos.
+; 	 Send "{Blind}{vkE8}"
+; 	 KeyWait "RAlt"
+; 	 Send "{RAlt Up}" 
+; 	 Return
+
+
+	RAlt:: {
+    Send "{Blind}{RAlt Down}"  ; Mantén presionado RAlt real
+    KeyWait "RAlt"
+    Send "{RAlt Up}"
+    Return
+}
+
 		
 	;           --- CAPA PRINCIPAL DVORAK EN ESPAÑOL --- 
 	;==================================================================
@@ -263,15 +252,15 @@ Space::
 		mantener presionado Lalt e ir tocando la tecla hasta optener el acento deseado
 		y luego soltar para que salga el simbolo, es mas practico, con cuadro de seleccion de acentos.
 
-		¡¡Tambien se puede usar las telas "',.p" para cambiar de idioma en vez de Ralt, pero esto solo sirve en dvorak, habría que cambiarlo para cada distro a menos que se usen los scancodes.
+	¡¡Tambien se puede usar las telas "',.p" para cambiar de idioma en vez de Ralt, pero esto solo sirve en dvorak, habría que cambiarlo para cada distro a menos que se usen los scancodes.
 	*/
 
 	
 	;Acentos del español
-	a::á
-	o::ó
+	a::send "{á}"
+	o::send "{ó}"
 	e::é
-	u::ú
+	u::send "{ú}"
 	i::í
 	n::ñ
 	
@@ -298,7 +287,7 @@ Space::
 ;==================================================================
 #HotIf GetKeyState("RAlt", "P")
 {
-	SC10::" ;Q
+	SC10::send "{`"}" ;Q
 	SC11::send "{<}"  ;W
 	SC12::send "{>}"  ;E
 	SC13::send "{@}"  ;R
@@ -307,7 +296,7 @@ Space::
 	SC16::send "{|}"  ;U
 	SC17::send "{\}"  ;I
 	SC18::send "{^}"  ;O
-	SC19::send "%"    ;P
+	SC19::send "{%}"  ;P
 	/*{
 		Send "{RAlt Up}"
 		Sleep 10
@@ -317,10 +306,10 @@ Space::
 		Return
 	}*/
 	
-	SC1E::send "{_}" ;A
+	VK41::send "{_}" ;A
 	SC1F::send "{—}" ;S
 	SC20::send "{{}" ;D
-	SC21::send "{(}" ;F
+	VK55::send "{(}" ;F 
 	SC22::send "{¿}" ;G
 	SC23::send "{?}" ;H
 	SC24::send "{)}" ;J
@@ -386,8 +375,8 @@ Space::
 	SC19::PgUp 				;P
 	SC27::PgDn 				;; o Ñ
 	SC32::#^Left 			;M
-	;SC33:: 					;,
-	;SC34:: 					;.
+	;SC33:: 					;, -> mover ventanas entre escritorios
+	;SC34:: 					;. -> mover ventanas entre escritorios
 	SC35::#^Right 		;/ o -
 	
 	;Atajos y modificaciones
@@ -398,15 +387,15 @@ Space::
 	SC11::^c 					;W
 	SC12::^v 					;E
 	SC13::#v 					;R
-	SC1E::^y 					;A
+	VK41::^y 					;A
 	SC30::^x 					;B
 	SC20::Shift 			;D
-	SC21::Ctrl        ;F
+	VK55::Ctrl        ;F
 	SC1F::Alt         ;S
 	SC2D::PrintScreen ;X
 	SC2F::AppsKey     ;V
 	
-	SC31:: ; N -> Activar y desactivar 'Scrolllock'
+	SC31:: ;N -> Activar y desactivar 'Scrolllock'
 	{  
 		estado_actual_scrollock := GetKeyState("ScrollLock", "T")
 		SetScrollLockState !estado_actual_scrollock  
@@ -450,7 +439,7 @@ Space::
 	
 	;Atajos y teclas especiales
 	SC20::Shift 	;D
-	SC21::Ctrl 		;F
+	VK55::Ctrl 		;F
 	SC1F::Alt 		;S
 	
 	SC22::% 			;G

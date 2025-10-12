@@ -1,0 +1,5 @@
+ Vamos por partos (quiero entender todo lo que pueda de autohotkey, ser muy pro en ello):
+1. Que es un "evento" y "evento de teclado".
+2. SendInput es una función de windows, que diferencia hay entre "Input" y "Event" en el send o en general?
+3. "Play" es un metodo a parte no? o sea algo propio de ahk?
+4. Send "Text" y "Raw" envian el texto literal o plano no? que diferencia tienen?
