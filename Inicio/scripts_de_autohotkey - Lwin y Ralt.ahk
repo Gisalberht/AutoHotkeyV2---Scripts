@@ -38,7 +38,7 @@ Esc::Suspend
 		Return
 	}*/
 	
-; `::Reload
+`::Reload
 +`::Suspend
 Enter::Ctrl
 \::Tab
@@ -173,33 +173,33 @@ CapsLock:: ;——> Pulsacion corta envia 'esc', pulsacion larga 'Ctrl'.
 		
 ;           --- 'Tab' para la capa de numeros ---
 ;==================================================================
-Tab::
-{
-	StartTime := A_TickCount 
-	KeyWait "Tab" , "T0.2"
-	ElapsedTime := A_TickCount - StartTime
-	If (ElapsedTime < 190)
+	Tab::
+	{
+		StartTime := A_TickCount 
+		KeyWait "Tab" , "T0.2"
+		ElapsedTime := A_TickCount - StartTime
+		If (ElapsedTime < 190)
+			{
+				Send "{Tab}"
+				Return 
+			} 
+		ElapsedTime := A_TickCount - StartTime
+		KeyWait "Tab"  
+		If GetKeyState("Shift")
+			{
+				Send "{Shift Up}"
+			}
+		If GetKeyState("Ctrl")
 		{
-			Send "{Tab}"
-			Return 
-		} 
-	ElapsedTime := A_TickCount - StartTime
-	KeyWait "Tab"  
-	If GetKeyState("Shift")
-		{
-			Send "{Shift Up}"
-		}
-	If GetKeyState("Ctrl")
-	 {
-		Send "{Ctrl Up}"
-		}
-	If GetKeyState("Alt")
-		{
-			Send "{Alt Up}"
-		}
-	Send "{Tab Up}"
-	Return
-}
+			Send "{Ctrl Up}"
+			}
+		If GetKeyState("Alt")
+			{
+				Send "{Alt Up}"
+			}
+		Send "{Tab Up}"
+		Return
+	}
 			
 ;     --- 'Space' para las capas de movimiento ---
 ;==================================================================
@@ -391,8 +391,12 @@ Space::
 	e::Shift
 	u::Ctrl
 	o::Alt
-	q::PrintScreen
+	i::Enter
+	`;::+F12
+	q::BackSpace
+	j::^n
 	k::AppsKey
+	y::^g
 	
 	b:: ;Activar y desactivar 'Scrolllock'
 	{  

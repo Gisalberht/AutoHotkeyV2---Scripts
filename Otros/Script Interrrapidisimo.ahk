@@ -1,14 +1,18 @@
 ;==================================================================
-; SCRIPTS DE INICO PARA DVORAK, MOUSE Y TECLADO
+; SCRIPTS DE INICO PARA QWERTY, MOUSE Y TECLADO
 ;==================================================================
-;Descripcion: Script que permite utiliar un teclado 60% convencional, como un teclado 40% con sistema de capas, usando la distribucion Dvorak.
+;Descripcion: Script que permite utiliar un teclado convencional, como un teclado 40% con sistema de capas, usando la distribucion Qwerty convertida a Dvorak.
 
 
 
 ;                       --- Directivas ---
 ;==================================================================
 	#SingleInstance Force
-	#UseHook
+	#UseHook True
+
+	#InputLevel 1
+	A_MaxHotkeysPerInterval := 200  ; Evita que AHK bloquee el script si escribes muy rápido
+	SendMode "Input"          ; Envía las teclas de la forma más rápida e ininterrumpida posible
 
 
 ;              --- Mostrar Icono en la bandeja ---
@@ -20,11 +24,20 @@
 	}
 					
 #SuspendExempt
-;-------------
-
-;   --- Cambiar distribución a QWERTY y suspender script --- 
+;   --- Suspender script --- 
 ;==================================================================
-Esc::Suspend
+|::Suspend
+/*{
+    Suspend -1  ; Alterna (toggle) el estado de suspensión del script
+
+    if A_IsSuspended {
+        ToolTip "Desactivado"
+        SetTimer () => ToolTip(), -500  ; Oculta el ToolTip después de 500 ms sin pausar la ejecución
+    } else {
+        ToolTip "Activado"
+        SetTimer () => ToolTip(), -500
+    }
+}*/
 
 ;          --- Liberar teclas modificadoras + 'Reload' ---
 ;==================================================================
@@ -39,35 +52,19 @@ Esc::Suspend
 	}*/
 	
 ; `::Reload
-+`::Suspend
-Enter::Ctrl
-\::Tab
-=::Tab
-RControl::RAlt
+;`::Suspend
+;Enter::Ctrl
+;\::Tab
+;=::Tab
+;RControl::RAlt
 
-;               --- Suspender en BrawlStars ---
-;==================================================================
-/*#space::Return
 
-SetTimer BrawlStars, 500
-	BrawlStars()
-	{
-		if WinActive("ahk_class Qt5154QWindowIcon")
-		{
-			Suspend true
-		}
-		else
-		{
-			Suspend false
-		}
-		Return
-	}*/
 
 
 ;          --- Fijar ventana: autor desconocido ---
 ;==================================================================
 	
-!p:: {
+/*!p:: {
 	Title_When_On_Top := "Pin: " ;--> cambia el titulo de la ventana fijada a "Pin: + nombre de ventana."
 	t := WinGetTitle("A") ;--> obtener titulo de ventana.
 	ExStyle := WinGetExStyle(t) ;--> obtener estilo extendido de ventana y guardarlo eh "ExStyle"
@@ -79,52 +76,94 @@ SetTimer BrawlStars, 500
 		WinSetAlwaysOnTop 1, t ;--> encienda y añada Title_When_On_Top
 		WinSetTitle Title_When_On_Top t, t ;--> establece el titulo "Pin"
 	}
-}
+}*/
 
 
 #SuspendExempt False
 ;-------------------
 
+;       --- Cadenas rapidas Interrapidisimo --- bb
+;==================================================================
+
+
 ;       --- Enmascaramiento de las teclas de Windows ---
 ;==================================================================
 
-LAlt::{ ; Tecla de activacion de la capa de acentos.
+/*LAlt::{ ; Tecla de activacion de la capa de acentos.
 	Send "{Blind}{vkE8}"
 	KeyWait "LAlt"
 	Send "{LAlt Up}"
 	Return
- } 
- RAlt::{ ;Tecla  activacion de la capa de simbolos.
-	 Send "{Blind}{vkE8}"
-	 KeyWait "RAlt"
-	 Send "{RAlt Up}"
-	 Return
-	} 
+ }*/
+<^>!RAlt::Return ;Tecla  activacion de la capa de simbolos.
+/**RAlt::
+{
+    Send "{Blind}{vkE8}"
+    KeyWait "RAlt"
+    Send "{RAlt Up}"
+    Return
+}*/
 	
 	
-	;           --- CAPA PRINCIPAL DVORAK EN ESPAÑOL --- 
+	;           --- CAPA PRINCIPAL QWERTY A DVORAK EN ESPAÑOL --- 
 	;==================================================================
-	h::r
-	r::h
-	/::BackSpace
-	LCtrl::Lwin
+	q::'
+	w::,
+	e::.
+	r::p
+	t::y
+	y::f
+	u::g
+	i::c
+	o::h
+	p::l
+
+	SC01A::BackSpace
+	
+
+	a::a
+	s::o
+	d::e
+	f::u
+	g::i
+	h::d
+	j::r
+	k::t
+	l::n
+	ñ::s
+
+	{::Enter
+
+	z::;
+	x::q
+	c::j
+	v::k
+	b::x
+	n::b
+	m::m
+	,::w
+	.::v
+	-::z 
+	
+	/*LCtrl::Lwin
 	LWin::{
 		Send "{LAlt Down}"
 		KeyWait "LWin"
 		Send "{LAlt Up}"
 		Return
-	}
+	}*/
 
 
 ;        --- Atajos y modificaciones para el mouse ---
 ;==================================================================
-XButton1::Enter
-XButton2::^v
+;probar: raise down, click hagan algo.
+;XButton1::Enter
+;XButton2::^v
 
 
 ;        --- Modifiaciones '-' para 'Enter' y 'Ctrl' ---
 ;==================================================================
--:: ;--> Pulsacion corta envia 'enter', pulsacion larga 'Ctrl' (maximo un segundo).
+/*-:: ;--> Pulsacion corta envia 'enter', pulsacion larga 'Ctrl' (maximo un segundo).
 ; --> Volvio el problema de la repeticion.
 {
 	StartTime :=A_TickCount
@@ -142,7 +181,7 @@ XButton2::^v
 	}
 	;----------
 	+_::+Enter
-	^-::^Enter
+	^-::^Enter*/
 	
 ;      --- Modifiaciones de 'Capslock' para 'Esc' y 'Ctrl' ---
 ;==================================================================
@@ -173,7 +212,7 @@ CapsLock:: ;——> Pulsacion corta envia 'esc', pulsacion larga 'Ctrl'.
 		
 ;           --- 'Tab' para la capa de numeros ---
 ;==================================================================
-Tab::
+/*Tab::
 {
 	StartTime := A_TickCount 
 	KeyWait "Tab" , "T0.2"
@@ -199,7 +238,7 @@ Tab::
 		}
 	Send "{Tab Up}"
 	Return
-}
+}*/
 			
 ;     --- 'Space' para las capas de movimiento ---
 ;==================================================================
@@ -235,13 +274,9 @@ Space::
 ;      --- 'LAlt' para acentos español/ingles/aleman ---
 ;==================================================================
 ;ESTA LA OPCION DE USAR UN CONMUTADOR PARA CAMBIAR ENTRE CAPAS.
-#HotIf GetKeyState("LAlt", "P")
+/*#HotIf GetKeyState("LAlt", "P")
 {
-	/* RAlt= {
-		conmutador
-	}
-		if (Ralt=1) {
-	*/
+
 	;Acentos del español
 	a::á
 	o::ó
@@ -267,70 +302,58 @@ Space::
 	+,::Ö
 	+p::Ü
 	+s::ẞ
-	/* } */
 
-	/*
-	if (Ralt=2) {
-		acentos en aleman, y asi sucesivamente
-		}
-
-		Ralt= capa base '0'
-		return
-
-		CLARO: tambien esta la opcion del modificador + tecla. 
-		¡¡Tambien se puede usar las telas "',.p" para cambiar de idioma en vez de Ralt
-	*/
-}
+}*/
 
 ;           --- 'RAlt' para simbolos variados ---
 ;==================================================================
 #HotIf GetKeyState("RAlt", "P")
 {
-	'::"
-	,::send "{<}"
-	.::send "{>}"
-	p::send "{@}"
-	y::send "{#}"
-	f::send "{``}"
-	g::send "{|}"
-	c::send "{\}"
-	r::send "{^}"
-	l::
+	q::"
+	w::send "{<}"
+	e::send "{>}"
+	r::send "{@}"
+	t::send "{#}"
+	y::send "{``}"
+	u::send "{|}"
+	i::send "{\}"
+	o::send "{^}"
+	p::
 	{
-		Send "{RAlt Up}"
-		Sleep 10
-		Send "{%}"
-		KeyWait "l"
-		Send "{RAlt Up}"
-		Return
+			Send "{RAlt Up}"
+			Sleep 10
+			Send "{%}"
+			KeyWait "p"
+			Send "{RAlt Up}"
+			Return
 	}
-	
+
 	a::send "{_}"
-	o::send "{—}"
-	e::send "{{}"
-	u::send "{(}"
-	i::send "{¿}"
-	d::send "{?}"
-	h::send "{)}"
-	t::send "{}}"
-	n::send "{[}"
-	s::send "{]}"
-	
-	`;::send "{:}"
-	q::send "{$}"
-	j::send "{&}"
-	k::send "{=}"
-	x::send "{¡}"
-	b::send "{!}"
+	s::send "{—}"
+	d::send "{{}"
+	f::send "{(}"
+	g::send "{¿}"
+	h::send "{?}"
+	j::send "{)}"
+	k::send "{}}"
+	l::send "{[}"
+	{::send "{]}"
+
+	z::send "{:}" 
+	x::send "{$}"
+	c::send "{&}"
+	v::send "{=}"
+	b::send "{¡}"
+	n::send "{!}"
 	m::send "{~}"
-	w::send "{°}"
-	v::send "{·}"
-	;z::send "{}"
+	,::send "{°}"
+	.::send "{·}"
+	;-/::send "{}"
 }
 
 ;        --- Mouse virtual: Space +	Scrolllock ---
 ;==================================================================
-#HotIf GetKeyState("Space", "P") and GetKeyState("ScrollLock", "T")
+/*#HotIf GetKeyState("Space", "P") and GetKeyState("ScrollLock", "T")
 {
 	;Teclas de desplazamiento para mover el cursor del mouse velocidad baja.
 	+c::MouseMove 0, -2, 0, "R"   ; Mover hacia arriba
@@ -358,13 +381,13 @@ Space::
 	v::WheelLeft
 	s::WheelDown
 	l::WheelUp
-}
+}*/
 
 ;     --- 'Space' para capa de movimiento/desplazamiento ---
 ;==================================================================
 #HotIf GetKeyState("Space", "P") and ElapsedTime => 200
 {
-	;Desplazamiento
+	/*;Desplazamiento
 	h::Left    
 	n::Right
 	c::Up
@@ -376,25 +399,29 @@ Space::
 	m::#^Left
 	;w::
 	;v::
-	z::#^Right
+	z::#^Right*/
 	
 	;Atajos y modificaciones
-	/::BackSpace
-	f::Delete
-	d::Insert
-	'::^z
-	,::^c
-	.::^v
-	p::#v
-	a::^y
-	x::^x
-	e::Shift
-	u::Ctrl
-	o::Alt
-	q::PrintScreen
-	k::AppsKey
+	;[::BackSpace
 	
-	b:: ;Activar y desactivar 'Scrolllock'
+	q::^z
+	w::^c
+	e::^v
+	r::#v
+	
+	a::^y
+	s::Enter
+	d::Delete
+	f::BackSpace
+
+	l::ñ
+	+l::Ñ
+	
+	;x::PrintScreen
+	;v::AppsKey
+	b::^x
+	
+	/*b:: ;Activar y desactivar 'Scrolllock'
 	{  
 		estado_actual_scrollock := GetKeyState("ScrollLock", "T")
 		SetScrollLockState !estado_actual_scrollock  
@@ -410,12 +437,12 @@ Space::
 				Sleep 	500
 				ToolTip
 			}
-	}
+	}*/
 }
 
 ;      --- 'Tab' para pad numérico + modificadoras ---
 ;==================================================================
-#HotIf GetKeyState("Tab", "P")
+/*#HotIf GetKeyState("Tab", "P")
 {
 	;Numeros del numpad.	
 	b::Numpad0
@@ -444,7 +471,7 @@ Space::
 	i::%
 	x::×
 	y::÷
-}
+}*/
 
 ;          --- 'Tecla/s' para teclas de función ---
 ;==================================================================
