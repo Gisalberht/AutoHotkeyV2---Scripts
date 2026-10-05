@@ -38,8 +38,8 @@ Esc::Suspend
 		Return
 	}*/
 	
-`::Reload
-+`::Suspend
+;`::Reload
+;+`::Suspend
 Enter::Ctrl
 \::Tab
 =::Tab
