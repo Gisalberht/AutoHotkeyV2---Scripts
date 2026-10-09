@@ -20,7 +20,6 @@
 ;   --- Suspender script --- 
 ;==================================================================
 |::Suspend
-1::Reload
 
 #SuspendExempt False
 ;-------------------
@@ -33,7 +32,7 @@ LAlt::return ;--> Para capa de movimiento/desplazamiento
 
 ;     --- Acciones con el mouse ---
 ;==================================================================
-LButton & RButton:: ;-> Copiar
+/*LButton & RButton:: ;-> Copiar
 {
 		Send "^c"
 		MostrarToolTip("Copiado")
@@ -43,6 +42,24 @@ RButton & LButton:: ;--> Pegar
 {
 	Send "^v"
 	MostrarToolTip("Pegado")
+}*/
+
+LButton & RButton:: ;-> Seleccionar todo + Copiar
+{
+    Send "^a"
+    Sleep 50       ; Pequeña pausa para asegurar que el sistema procese la selección
+    Send "^c"
+    MostrarToolTip("Copiado")
+}
+
+RButton & LButton:: ;--> Seleccionar todo + Borrar + Pegar
+{
+    Send "^a"
+    Sleep 50
+    Send "{Delete}"
+    Sleep 50
+    Send "^v"
+    MostrarToolTip("Pegado")
 }
 
 MostrarToolTip(mensaje) ;--> Funcion auxiliar para mostrar/ocultar tooltip
@@ -53,30 +70,46 @@ MostrarToolTip(mensaje) ;--> Funcion auxiliar para mostrar/ocultar tooltip
 
 ;     --- 'LAlt' para capa de movimiento/desplazamiento ---
 ;==================================================================
-#HotIf GetKeyState("LAlt", "P") ;and ElapsedTime => 200
-{
-	CapsLock::Esc
+;#HotIf GetKeyState("LAlt", "P") ;and ElapsedTime => 200
+;{
+	<!CapsLock::Esc
 	
-	q::^z ;--> deshacer
-	w::^c ;--> copiar
-	e::^v ;--> pegar
-	r::#v ;--> portapapeles
+	<!q:: ;--> mostrar guia
+	{
+    Send "{Tab 7}{Enter}{Tab 3}{Enter}"
+	}
+	<!w::^c ;--> copiar
+	<!e::^v ;--> pegar
+	<!r::#v ;--> portapapeles
 	;t:: ;--> 
 	
-	a::^y ;--> rehacer
-	s::^p ;--> imprimir
-	d::Delete ;--> suprimir
-	f::BackSpace ;--> retroceder
-	g::Enter ;--> entrar
+	<!a:: ;--> Imprimir guia
+	{
+    Send "{Tab 3}{Enter}"
+	}
+	<!s::!F4 ;--> cerrar ventana
+	<!d::^a ;--> seleccina texto
+	<!f::BackSpace ;--> retroceder
+	<!g::Enter ;--> entrar
 	
-	;z:: ;--> 
+	<!z:: ;--> Alt + V: Fuerza la ventana activa a un tamaño vertical (ej. 450px de ancho por 900px de alto)
+	{
+			; Obtiene el ID de la ventana activa
+			hwnd := WinExist("A")
+			
+			; Quita el estado maximizado si lo tiene
+			WinRestore(hwnd)
+			
+			; Redimensiona: X=100, Y=50, Ancho=480, Alto=950
+			WinMove(100, 50, 480, 950, hwnd)
+	} 
 	;x:: ;--> 
 	;c:: ;--> 
 	;v:: ;--> 
-	b::^b ;--> buscar
+	<!b::^b ;--> buscar
 	 ;x::PrintScreen ;--> 
 	
-	/*;Desplazamiento
+	/*;Desplazamiento				
 	h::Left    
 	n::Right
 	c::Up
@@ -93,7 +126,7 @@ MostrarToolTip(mensaje) ;--> Funcion auxiliar para mostrar/ocultar tooltip
 	;Atajos y modificaciones
 	;[::BackSpace
 	
-}
+;}
 
  ;--- Remapeo teclas padnumerico ---
 ;==================================================================
