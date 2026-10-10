@@ -26,9 +26,57 @@
 
 ;     --- Enmascaramientos ---
 ;==================================================================
-LAlt::return ;--> Para capa de movimiento/desplazamiento 
-~LButton::Return ;--> Mantiene uso normal del clic
-~RButton::Return ;--> Mantiene uso normal del clic
+;LAlt::return ;--> Para capa de movimiento/desplazamiento 
+
+
+RButton:: ;--> Al presionar RButton solo, se espera a ver si lo sueltas o presionas otra tecla
+{
+    KeyWait "RButton"
+    if (A_PriorKey == "RButton")
+    {
+        Click "Right" ; Clic derecho normal al soltar
+    }
+}
+
+~LButton::Return
+/*LButton:: ;--> Espera siguiente accion, si no hay, envia Lbutton.
+; Tiene problemas con el resaltado.
+{
+    KeyWait "LButton"
+    if (A_PriorKey == "LButton")
+    {
+        Click "Left" ; Clic izquierdo normal al soltar
+    }
+}*/
+
+LButton & RButton:: ;-> Seleccionar todo + Copiar
+{
+		Click 1
+		Sleep 50
+    Send "^a"
+    Sleep 50       ; Pequeña pausa para asegurar que el sistema procese la selección
+    Send "^c"
+    MostrarToolTip("Copiado")
+}
+
+RButton & LButton:: ;--> Seleccionar todo + Borrar + Pegar
+{
+    Click 1
+		Sleep 50
+		Send "^a"
+    Sleep 50
+    Send "{Delete}"
+    Sleep 50
+    Send "^v"
+    MostrarToolTip("Reemplazado")
+}
+
+MostrarToolTip(mensaje) ; Función auxiliar para mostrar/ocultar tooltip
+{
+	ToolTip mensaje
+	SetTimer () => ToolTip(), -800  ; Oculta el ToolTip después de 800 ms
+}
+
 
 ;     --- Acciones con el mouse ---
 ;==================================================================
@@ -44,29 +92,10 @@ RButton & LButton:: ;--> Pegar
 	MostrarToolTip("Pegado")
 }*/
 
-LButton & RButton:: ;-> Seleccionar todo + Copiar
-{
-    Send "^a"
-    Sleep 50       ; Pequeña pausa para asegurar que el sistema procese la selección
-    Send "^c"
-    MostrarToolTip("Copiado")
-}
+;Tenia fallos sin KeyWait.
 
-RButton & LButton:: ;--> Seleccionar todo + Borrar + Pegar
-{
-    Send "^a"
-    Sleep 50
-    Send "{Delete}"
-    Sleep 50
-    Send "^v"
-    MostrarToolTip("Pegado")
-}
 
-MostrarToolTip(mensaje) ;--> Funcion auxiliar para mostrar/ocultar tooltip
-{
-	ToolTip mensaje
-	SetTimer () => ToolTip(), -800  ; Oculta el ToolTip después de 800 ms sin pausar el script
-}
+
 
 ;     --- 'LAlt' para capa de movimiento/desplazamiento ---
 ;==================================================================
@@ -74,18 +103,55 @@ MostrarToolTip(mensaje) ;--> Funcion auxiliar para mostrar/ocultar tooltip
 ;{
 	<!CapsLock::Esc
 	
-	<!q:: ;--> mostrar guia
+	/*<!q:: ;--> mostrar guia
 	{
     Send "{Tab 7}{Enter}{Tab 3}{Enter}"
-	}
+	}*/
+	<!q:: ;--> mostrar guía con pausas para PC lenta
+{
+    Send "{Tab}"
+    Sleep 150
+    Send "{Tab}"
+    Sleep 150
+    Send "{Tab}"
+    Sleep 150
+    Send "{Tab}"
+    Sleep 150
+    Send "{Tab}"
+    Sleep 150
+    Send "{Tab}"
+    Sleep 150
+    Send "{Tab}"
+    Sleep 150
+    Send "{Enter}"
+    Sleep 200
+    Send "{Tab}"
+    Sleep 150
+    Send "{Tab}"
+    Sleep 150
+    Send "{Tab}"
+    Sleep 150
+    Send "{Enter}"
+}
+	
 	<!w::^c ;--> copiar
 	<!e::^v ;--> pegar
 	<!r::#v ;--> portapapeles
 	;t:: ;--> 
 	
-	<!a:: ;--> Imprimir guia
+	/*<!a:: ;--> Imprimir guia
 	{
     Send "{Tab 3}{Enter}"
+	}*/
+	<!a:: ;--> Imprimir guia con pausas para PC lenta
+	{
+		Send "{Tab}"
+    Sleep 150
+    Send "{Tab}"
+    Sleep 150
+    Send "{Tab}"
+    Sleep 150
+    Send "{Enter}"
 	}
 	<!s::!F4 ;--> cerrar ventana
 	<!d::^a ;--> seleccina texto
@@ -130,5 +196,72 @@ MostrarToolTip(mensaje) ;--> Funcion auxiliar para mostrar/ocultar tooltip
 
  ;--- Remapeo teclas padnumerico ---
 ;==================================================================
-;$NumpadSub::Send "{Backspace}"
-;SC04A::Backspace
+; NumpadDiv (la tecla / del pad numérico) envía Backspace
+NumpadDiv::Backspace
+
+; NumpadMult (la tecla * del pad numérico) envía Tab
+NumpadMult::Tab
+
+
+
+/* ; probar clic copiar, doble clic pegar.
+   --- Atajos del mouse--- 
+;==================================================================
+~LButton::Return ;--> Mantiene uso normal del clic
+
+; Al presionar RButton solo, se espera a ver si lo sueltas o presionas otra tecla
+RButton::
+{
+    KeyWait "RButton"
+    if (A_PriorKey == "RButton")
+    {
+        Click "Right" ; Clic derecho normal al soltar
+    }
+}
+
+; Combinación: Mantener RButton y presionar LButton (Maneja un clic o doble clic)
+RButton & LButton::
+{
+    static clicCount := 0
+    clicCount++
+    
+    ; Si es el primer clic, esperamos un momento corto para ver si hay un segundo clic
+    if (clicCount == 1)
+    {
+        SetTimer(EjecutarAccion, -250) ; 250 milisegundos de margen para el doble clic
+    }
+    
+    EjecutarAccion()
+    {
+        if (clicCount >= 2) ; <-- ACCIÓN PARA DOBLE CLIC (Envía ^+v)
+        {
+            Click 2
+            Sleep 50
+            Send "^e"
+            Sleep 50
+            Send "{Delete}"
+            Sleep 50
+            Send "^+v"           ; Pega sin formato limpio
+            MostrarToolTip("Pegado sin Formato")
+        }
+        else if (clicCount == 1) ; <-- ACCIÓN PARA UN SOLO CLIC (Envía ^v)
+        {
+            Click 2
+            Sleep 50
+            Send "^e"
+            Sleep 50
+            Send "{Delete}"
+            Sleep 50
+            Send "^v"          ; Pega normal (con formato original)
+            MostrarToolTip("Pegado")
+        }
+        clicCount := 0 ; Reinicia el contador para la próxima vez
+    }
+}
+
+MostrarToolTip(mensaje) ; Función auxiliar para mostrar/ocultar tooltip
+{
+	ToolTip mensaje
+	SetTimer () => ToolTip(), -800  ; Oculta el ToolTip después de 800 ms
+}*/
+
