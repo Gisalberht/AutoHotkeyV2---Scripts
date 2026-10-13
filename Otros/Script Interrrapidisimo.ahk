@@ -38,8 +38,7 @@ RButton:: ;--> Al presionar RButton solo, se espera a ver si lo sueltas o presio
     }
 }
 
-~LButton::Return
-/*LButton:: ;--> Espera siguiente accion, si no hay, envia Lbutton.
+LButton:: ;--> Espera siguiente accion, si no hay, envia Lbutton.
 ; Tiene problemas con el resaltado.
 {
     KeyWait "LButton"
@@ -47,12 +46,13 @@ RButton:: ;--> Al presionar RButton solo, se espera a ver si lo sueltas o presio
     {
         Click "Left" ; Clic izquierdo normal al soltar
     }
-}*/
+}
+
 
 LButton & RButton:: ;-> Seleccionar todo + Copiar
 {
-		Click 1
-		Sleep 50
+    Click 1
+	Sleep 50
     Send "^a"
     Sleep 50       ; Pequeña pausa para asegurar que el sistema procese la selección
     Send "^c"
@@ -78,36 +78,12 @@ MostrarToolTip(mensaje) ; Función auxiliar para mostrar/ocultar tooltip
 }
 
 
-;     --- Acciones con el mouse ---
-;==================================================================
-/*LButton & RButton:: ;-> Copiar
-{
-		Send "^c"
-		MostrarToolTip("Copiado")
-}
-
-RButton & LButton:: ;--> Pegar
-{
-	Send "^v"
-	MostrarToolTip("Pegado")
-}*/
-
-;Tenia fallos sin KeyWait.
-
-
-
-
 ;     --- 'LAlt' para capa de movimiento/desplazamiento ---
 ;==================================================================
-;#HotIf GetKeyState("LAlt", "P") ;and ElapsedTime => 200
-;{
-	<!CapsLock::Esc
+
+<!CapsLock::Esc
 	
-	/*<!q:: ;--> mostrar guia
-	{
-    Send "{Tab 7}{Enter}{Tab 3}{Enter}"
-	}*/
-	<!q:: ;--> mostrar guía con pausas para PC lenta
+<!q:: ;--> mostrar guía con pausas para PC lenta
 {
     Send "{Tab}"
     Sleep 150
@@ -134,65 +110,65 @@ RButton & LButton:: ;--> Pegar
     Send "{Enter}"
 }
 	
-	<!w::^c ;--> copiar
-	<!e::^v ;--> pegar
-	<!r::#v ;--> portapapeles
-	;t:: ;--> 
+<!w::^c ;--> copiar
+<!e::^v ;--> pegar
+<!r::#v ;--> portapapeles
+;t:: ;--> 
+
+<!a:: ;--> Imprimir guia con pausas para PC lenta
+{
+Send "{Tab}"
+Sleep 150
+Send "{Tab}"
+Sleep 150
+Send "{Tab}"
+Sleep 150
+Send "{Enter}"
+Sleep 150
+Send "{Tab}"
+Sleep 150
+Send "{Tab}"
+Sleep 150
+Send "{Tab}"
+Sleep 150
+Send "{Enter}"
+}
+<!s::!F4 ;--> cerrar ventana
+<!d::^a ;--> seleccina texto
+<!f::BackSpace ;--> retroceder
+<!g::Enter ;--> entrar
+
+<!z:: ;--> Alt + V: Fuerza la ventana activa a un tamaño vertical (ej. 450px de ancho por 900px de alto)
+{
+        ; Obtiene el ID de la ventana activa
+        hwnd := WinExist("A")
+        
+        ; Quita el estado maximizado si lo tiene
+        WinRestore(hwnd)
+        
+        ; Redimensiona: X=100, Y=50, Ancho=480, Alto=950
+        WinMove(100, 50, 480, 950, hwnd)
+} 
+;x:: ;--> 
+;c:: ;--> 
+;v:: ;--> 
+<!b::^b ;--> buscar
+;x::PrintScreen ;--> 
+
+;Desplazamiento				
+h::Left    
+n::Right
+c::Up
+t::Down
+g::Home
+r::End
+l::PgUp
+s::PgDn
+m::#^Left
+;w::
+;v::
+z::#^Right
 	
-	/*<!a:: ;--> Imprimir guia
-	{
-    Send "{Tab 3}{Enter}"
-	}*/
-	<!a:: ;--> Imprimir guia con pausas para PC lenta
-	{
-		Send "{Tab}"
-    Sleep 150
-    Send "{Tab}"
-    Sleep 150
-    Send "{Tab}"
-    Sleep 150
-    Send "{Enter}"
-	}
-	<!s::!F4 ;--> cerrar ventana
-	<!d::^a ;--> seleccina texto
-	<!f::BackSpace ;--> retroceder
-	<!g::Enter ;--> entrar
-	
-	<!z:: ;--> Alt + V: Fuerza la ventana activa a un tamaño vertical (ej. 450px de ancho por 900px de alto)
-	{
-			; Obtiene el ID de la ventana activa
-			hwnd := WinExist("A")
-			
-			; Quita el estado maximizado si lo tiene
-			WinRestore(hwnd)
-			
-			; Redimensiona: X=100, Y=50, Ancho=480, Alto=950
-			WinMove(100, 50, 480, 950, hwnd)
-	} 
-	;x:: ;--> 
-	;c:: ;--> 
-	;v:: ;--> 
-	<!b::^b ;--> buscar
-	 ;x::PrintScreen ;--> 
-	
-	/*;Desplazamiento				
-	h::Left    
-	n::Right
-	c::Up
-	t::Down
-	g::Home
-	r::End
-	l::PgUp
-	s::PgDn
-	m::#^Left
-	;w::
-	;v::
-	z::#^Right*/
-	
-	;Atajos y modificaciones
-	;[::BackSpace
-	
-;}
 
  ;--- Remapeo teclas padnumerico ---
 ;==================================================================
@@ -202,66 +178,60 @@ NumpadDiv::Backspace
 ; NumpadMult (la tecla * del pad numérico) envía Tab
 NumpadMult::Tab
 
+; NumpadLock (la tecla bloqueo numerico del pad numérico) envía Seleccionar y copiar.
+NumLock::
+{
+    Send "^a"
+    Sleep 50       ; Pequeña pausa para asegurar que el sistema procese la selección
+    Send "^c"
+    MostrarToolTip("Copiado")
+}
 
-
-/* ; probar clic copiar, doble clic pegar.
-   --- Atajos del mouse--- 
+;   --- Version de las FNum--- 
 ;==================================================================
-~LButton::Return ;--> Mantiene uso normal del clic
-
-; Al presionar RButton solo, se espera a ver si lo sueltas o presionas otra tecla
-RButton::
+F1:: ;--> Mostrar guia
 {
-    KeyWait "RButton"
-    if (A_PriorKey == "RButton")
-    {
-        Click "Right" ; Clic derecho normal al soltar
-    }
+    Send "{Tab}"
+    Sleep 150
+    Send "{Tab}"
+    Sleep 150
+    Send "{Tab}"
+    Sleep 150
+    Send "{Tab}"
+    Sleep 150
+    Send "{Tab}"
+    Sleep 150
+    Send "{Tab}"
+    Sleep 150
+    Send "{Tab}"
+    Sleep 150
+    Send "{Enter}"
+    Sleep 200
+    Send "{Tab}"
+    Sleep 150
+    Send "{Tab}"
+    Sleep 150
+    Send "{Tab}"
+    Sleep 150
+    Send "{Enter}"
 }
-
-; Combinación: Mantener RButton y presionar LButton (Maneja un clic o doble clic)
-RButton & LButton::
+F2:: ;--> Imprimir guia
 {
-    static clicCount := 0
-    clicCount++
-    
-    ; Si es el primer clic, esperamos un momento corto para ver si hay un segundo clic
-    if (clicCount == 1)
-    {
-        SetTimer(EjecutarAccion, -250) ; 250 milisegundos de margen para el doble clic
-    }
-    
-    EjecutarAccion()
-    {
-        if (clicCount >= 2) ; <-- ACCIÓN PARA DOBLE CLIC (Envía ^+v)
-        {
-            Click 2
-            Sleep 50
-            Send "^e"
-            Sleep 50
-            Send "{Delete}"
-            Sleep 50
-            Send "^+v"           ; Pega sin formato limpio
-            MostrarToolTip("Pegado sin Formato")
-        }
-        else if (clicCount == 1) ; <-- ACCIÓN PARA UN SOLO CLIC (Envía ^v)
-        {
-            Click 2
-            Sleep 50
-            Send "^e"
-            Sleep 50
-            Send "{Delete}"
-            Sleep 50
-            Send "^v"          ; Pega normal (con formato original)
-            MostrarToolTip("Pegado")
-        }
-        clicCount := 0 ; Reinicia el contador para la próxima vez
-    }
+    Send "{Tab}"
+    Sleep 150
+    Send "{Tab}"
+    Sleep 150
+    Send "{Tab}"
+    Sleep 150
+    Send "{Enter}"
+    Sleep 150
+    Send "{Tab}"
+    Sleep 150
+    Send "{Tab}"
+    Sleep 150
+    Send "{Tab}"
+    Sleep 150
+    Send "{Enter}"
 }
-
-MostrarToolTip(mensaje) ; Función auxiliar para mostrar/ocultar tooltip
-{
-	ToolTip mensaje
-	SetTimer () => ToolTip(), -800  ; Oculta el ToolTip después de 800 ms
-}*/
+F3::!F4 ;--> Cerrar ventana
 
