@@ -28,8 +28,7 @@
 ;==================================================================
 ;LAlt::return ;--> Para capa de movimiento/desplazamiento 
 
-
-RButton:: ;--> Al presionar RButton solo, se espera a ver si lo sueltas o presionas otra tecla
+/*RButton:: ;--> Al presionar RButton solo, se espera a ver si lo sueltas o presionas otra tecla
 {
     KeyWait "RButton"
     if (A_PriorKey == "RButton")
@@ -75,12 +74,13 @@ MostrarToolTip(mensaje) ; Función auxiliar para mostrar/ocultar tooltip
 {
 	ToolTip mensaje
 	SetTimer () => ToolTip(), -800  ; Oculta el ToolTip después de 800 ms
-}
+}*/
+
 
 
 ;     --- 'LAlt' para capa de movimiento/desplazamiento ---
 ;==================================================================
-
+/*
 <!CapsLock::Esc
 	
 <!q:: ;--> mostrar guía con pausas para PC lenta
@@ -109,7 +109,8 @@ MostrarToolTip(mensaje) ; Función auxiliar para mostrar/ocultar tooltip
     Sleep 150
     Send "{Enter}"
 }
-	
+
+
 <!w::^c ;--> copiar
 <!e::^v ;--> pegar
 <!r::#v ;--> portapapeles
@@ -168,7 +169,7 @@ m::#^Left
 ;w::
 ;v::
 z::#^Right
-	
+*/
 
  ;--- Remapeo teclas padnumerico ---
 ;==================================================================
@@ -235,3 +236,104 @@ F2:: ;--> Imprimir guia
 }
 F3::!F4 ;--> Cerrar ventana
 
+
+/*;   --- Atajos del mouse: un RButton + 1 clic copiar; +2 clic pegar --- 
+;==================================================================
+
+; Al presionar RButton solo, se espera a ver si lo sueltas o presionas otra tecla
+RButton::
+{
+    KeyWait "RButton"
+    if (A_PriorKey == "RButton")
+    {
+        Click "Right" ; Clic derecho normal al soltar
+    }
+}
+
+; Combinación: Mantener RButton y presionar LButton (Maneja un clic o doble clic)
+RButton & LButton::
+{
+    static clicCount := 0
+    clicCount++
+    
+    ; Si es el primer clic, esperamos un momento corto para ver si hay un segundo clic
+    if (clicCount == 1)
+    {
+        SetTimer(EjecutarAccion, -250) ; 250 milisegundos de margen para el doble clic
+    }
+    
+    EjecutarAccion()
+    {
+        if (clicCount >= 2) ; <-- ACCIÓN PARA DOBLE CLIC (Envía ^v): Reemplazar.
+        {
+            Click 1
+            Sleep 50
+            Send "^a" ;--> Seleccionar todo.
+            Sleep 50
+            Send "{Delete}"
+            Sleep 50
+            Send "^v"           ; Pegar
+            MostrarToolTip("Pegado")
+        }
+        else if (clicCount == 1) ; <-- ACCIÓN PARA UN SOLO CLIC (Envía ^c)
+        {
+            Click 1
+            Sleep 50
+            Send "^a"
+            Sleep 50
+            Send "^c"          ;--> Copiar
+            MostrarToolTip("Copiado")
+        }
+        clicCount := 0 ; Reinicia el contador para la próxima vez
+    }
+}
+
+MostrarToolTip(mensaje) ; Función auxiliar para mostrar/ocultar tooltip
+{
+	ToolTip mensaje
+	SetTimer () => ToolTip(), -800  ; Oculta el ToolTip después de 800 ms
+}*/
+
+
+
+
+;   --- Atajos del mouse: un RButton + 1 clic pegar; MidButton copiar --- 
+;==================================================================
+
+MButton:: ;--> Copiar
+{
+    Click 1
+    Sleep 50
+    Send "^a"
+    Sleep 50
+    Send "^c"
+    MostrarToolTip("Copiado")
+}
+
+; Al presionar RButton solo, se espera a ver si lo sueltas o presionas otra tecla
+RButton::
+{
+    KeyWait "RButton"
+    if (A_PriorKey == "RButton")
+    {
+        Click "Right" ; Clic derecho normal al soltar
+    }
+}
+
+RButton & LButton:: ;--> Seleccionar todo + Borrar + Pegar
+{
+    Click 1
+    Sleep 50
+    Send "^a"
+    Sleep 50
+    Send "{Delete}"
+    Sleep 50
+    Send "^v"
+    MostrarToolTip("Reemplazado")
+}
+
+MostrarToolTip(mensaje) ; Función auxiliar para mostrar/ocultar tooltip
+{
+	ToolTip mensaje
+	SetTimer () => ToolTip(), -800  ; Oculta el ToolTip después de 800 ms
+}
