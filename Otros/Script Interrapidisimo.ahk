@@ -3,12 +3,12 @@
 ;==================================================================
 ;Descripcion: mejor flujo de trabajo en tareas repetitivas.
 
-;                       --- Directivas ---
+;                       --- DIRECTIVAS ---
 ;==================================================================
 #SingleInstance Force
 #UseHook
 
-;              --- Mostrar Icono en la bandeja ---
+;              --- MOSTRAR ICONO EN LA BANDEJA ---
 ;==================================================================
 SetTimer ShowIcon, 6000
 ShowIcon() {
@@ -16,24 +16,88 @@ ShowIcon() {
     SetTimer ShowIcon, 0
 }
 					
-#SuspendExempt
-;   --- Suspender script --- 
+;                   --- SUSPENCION DE SCRIPT --- 
 ;==================================================================
+#SuspendExempt
 |::Suspend
 
 #SuspendExempt False
 ;-------------------
 
-;   --- Funciones --- 
+;                         --- FUNCIONES --- 
 ;==================================================================
-MostrarToolTip(mensaje) ; Función auxiliar para mostrar/ocultar tooltip
-{
+;Función auxiliar para mostrar/ocultar tooltip
+MostrarToolTip(mensaje) {
 	ToolTip mensaje
 	SetTimer () => ToolTip(), -800  ; Oculta el ToolTip después de 800 ms
 }
 
-;   --- Atajos del mouse --- 
+;Funcion para mostrar guia
+MostrarGuia() {
+    Click 1
+    Sleep 50
+    Send "^a"
+    Sleep 50
+    Send "{Delete}"
+    Sleep 50
+    Send "^v"
+    MostrarToolTip("Reemplazado")
+    Sleep 200
+    ;Secuencia de 7 Tabs
+    Loop 7 {
+        Send "{Tab}"
+        Sleep 100
+    }
+    Send "{Enter}"
+    Sleep 150
+    ;Secuencia de 3 Tabs
+    Loop 3 {
+        Send "{Tab}"
+        Sleep 100
+    }
+    Send "{Enter}"
+}
+
+;Funcion para imprimir guia
+ImprimirGuia() {
+    ;Secuencia de 3 Tabs
+    Loop 3 {
+        Send "{Tab}"
+        Sleep 100
+    }
+    Send "{Enter}"
+    ; Secuencia de 3 Tabs
+    Loop 3 {
+        Send "{Tab}"
+        Sleep 100
+    }
+    Send "{Enter}"
+}
+
+;Funcion para reemplazar texto
+ReemplazarTexto() {
+    Click 1
+    Sleep 50
+    Send "^a"
+    Sleep 50
+    Send "{Delete}"
+    Sleep 50
+    Send "^v"
+    MostrarToolTip("Reemplazado")
+}
+
+
+;                   --- ATAJOS DEL MOUSE --- 
 ;==================================================================
+RButton:: ;--> Enmascaramiento de RButton.
+{
+    KeyWait "RButton"
+    if (A_PriorKey == "RButton")
+    {
+        Click "Right" ; Clic derecho normal al soltar
+    }
+}
+
 MButton:: ;--> Copiar
 {
     Click 1
@@ -44,301 +108,74 @@ MButton:: ;--> Copiar
     MostrarToolTip("Copiado")
 }
 
-; Esperar segundo clic, si no mandar RButton.
-RButton::
-{
-    KeyWait "RButton"
-    if (A_PriorKey == "RButton")
-    {
-        Click "Right" ; Clic derecho normal al soltar
-    }
+RButton & LButton::
+{ReemplazarTexto()
 }
 
-RButton & LButton:: ; --> Acciones segun numero de clics
+
+;         --- CONTROL DE GUIAS VERSION DE LAS HOTIF --- 
+;==================================================================
+
+#HotIf WinActive("ahk_exe PosWPF.Cliente.exe")
+RButton & LButton::
 {
-    static clicCount := 0
-    clicCount++
-    
-    ; Contador de clics
-    if (clicCount == 1)
-    {
-        SetTimer(EjecutarAccion, -250) ; 250 milisegundos de margen para el entre clic
-    }
-    
-    EjecutarAccion()
-    {
-        if (clicCount == 1) ; --> Reemplazar contenido.
-        {
-            Click 1
-            Sleep 50
-            Send "^a"
-            Sleep 50
-            Send "{Delete}"
-            Sleep 50
-            Send "^v"           
-            MostrarToolTip("Reemplazado")
-        }
-        else if (clicCount >= 2) ; --> Impresion directa
-        {
-            Send "{Tab}"
-            Sleep 100
-            Send "{Tab}"
-            Sleep 100
-            Send "{Tab}"
-            Sleep 100
-            Send "{Tab}"
-            Sleep 100
-            Send "{Tab}"
-            Sleep 100
-            Send "{Tab}"
-            Sleep 100
-            Send "{Tab}"
-            Sleep 100
-            Send "{Enter}"
-
-            Sleep 150
-            
-            Send "{Tab}"
-            Sleep 100
-            Send "{Tab}"
-            Sleep 100
-            Send "{Tab}"
-            Sleep 100
-            Send "{Enter}"
-
-            Sleep 150
-                    
-            Send "{Tab}"
-            Sleep 100
-            Send "{Tab}"
-            Sleep 100
-            Send "{Tab}"
-            Sleep 100
-            Send "{Enter}"
-
-            Sleep 150
-            
-            Send "{Tab}"
-            Sleep 100
-            Send "{Tab}"
-            Sleep 100
-            Send "{Tab}"
-            Sleep 100
-            Send "{Enter}"
-        }
-        clicCount := 0 ; Reinicia el contador para la próxima vez
-    }
+    ReemplazarTexto()
+    Sleep 200
+    MostrarGuia()
 }
 
- ;--- Remapeo teclas padnumerico ---
+/*RButton:: ;--> Probar a ver
+{
+    ImprimirGuia()
+}*/
+#HotIf
+
+#HotIf WinActive("añadir clase ahk_exe PosWPF.Cliente.exe")
+RButton & LButton::
+{ImprimirGuia()
+}
+#HotIf
+
+
+;       --- CONTROL DE GUIAS VERSION DEL TECLADO NUMERICO ---
 ;==================================================================
 NumpadDiv::Backspace
 NumpadMult::Tab
-NumLock::
+NumpadDot::
+{
+    Send "{WheelDown}"
+    Sleep 50
+    Send "{WheelDown}"
+    Sleep 50
+    Send "{WheelDown}"
+    Sleep 50
+    Send "{WheelDown}"
+}
+NumpadEnter::
 {
     Send "^a"
     Sleep 50
     Send "^c"
     Sleep 50
     MostrarToolTip("Copiado")
-    Sleep 100  
-    Send "{Enter}"
-}
-
-PGUP:: ;--> Mostrar guia
-{
-    Send "{Tab}"
-    Sleep 100
-    Send "{Tab}"
-    Sleep 100
-    Send "{Tab}"
-    Sleep 100
-    Send "{Tab}"
-    Sleep 100
-    Send "{Tab}"
-    Sleep 100
-    Send "{Tab}"
-    Sleep 100
-    Send "{Tab}"
-    Sleep 100
-    Send "{Enter}"
-
-    Sleep 150
-    
-    Send "{Tab}"
-    Sleep 100
-    Send "{Tab}"
-    Sleep 100
-    Send "{Tab}"
     Sleep 100
     Send "{Enter}"
 }
-
-PGDN:: ;--> Imprimir guia
-{
-    Send "{Tab}"
-    Sleep 100
-    Send "{Tab}"
-    Sleep 100
-    Send "{Tab}"
-    Sleep 100
-    Send "{Enter}"
-    
-    Sleep 150
-    
-    Send "{Tab}"
-    Sleep 100
-    Send "{Tab}"
-    Sleep 100
-    Send "{Tab}"
-    Sleep 100
-    Send "{Enter}"
+PGUP::
+{MostrarGuia()
 }
-
-End:: ;--> Impresion directa
-{
-    Send "{Tab}"
-    Sleep 100
-    Send "{Tab}"
-    Sleep 100
-    Send "{Tab}"
-    Sleep 100
-    Send "{Tab}"
-    Sleep 100
-    Send "{Tab}"
-    Sleep 100
-    Send "{Tab}"
-    Sleep 100
-    Send "{Tab}"
-    Sleep 100
-    Send "{Enter}"
-
-    Sleep 150
-    
-    Send "{Tab}"
-    Sleep 100
-    Send "{Tab}"
-    Sleep 100
-    Send "{Tab}"
-    Sleep 100
-    Send "{Enter}"
-
-    Sleep 150
-            
-    Send "{Tab}"
-    Sleep 100
-    Send "{Tab}"
-    Sleep 100
-    Send "{Tab}"
-    Sleep 100
-    Send "{Enter}"
-
-    Sleep 150
-    
-    Send "{Tab}"
-    Sleep 100
-    Send "{Tab}"
-    Sleep 100
-    Send "{Tab}"
-    Sleep 100
-    Send "{Enter}"
+PGDN::
+{ImprimirGuia()
 }
-
 Home::!F4 ;--> Cerrar ventana
 
-;   --- Version de las FNum--- 
+
+;           --- CONTROL DE GUIAS VERSION DE LAS FNUM --- 
 ;==================================================================
-F1:: ;--> Mostrar guia
-{
-    Send "{Tab}"
-    Sleep 150
-    Send "{Tab}"
-    Sleep 150
-    Send "{Tab}"
-    Sleep 150
-    Send "{Tab}"
-    Sleep 150
-    Send "{Tab}"
-    Sleep 150
-    Send "{Tab}"
-    Sleep 150
-    Send "{Tab}"
-    Sleep 150
-    Send "{Enter}"
-    Sleep 200
-    Send "{Tab}"
-    Sleep 150
-    Send "{Tab}"
-    Sleep 150
-    Send "{Tab}"
-    Sleep 150
-    Send "{Enter}"
+F1::
+{MostrarGuia()
 }
-F2:: ;--> Imprimir guia
-{
-    Send "{Tab}"
-    Sleep 150
-    Send "{Tab}"
-    Sleep 150
-    Send "{Tab}"
-    Sleep 150
-    Send "{Enter}"
-    Sleep 150
-    Send "{Tab}"
-    Sleep 150
-    Send "{Tab}"
-    Sleep 150
-    Send "{Tab}"
-    Sleep 150
-    Send "{Enter}"
+F2::
+{ImprimirGuia()
 }
-F3:: ;--> Impresion directa
-{
-    Send "{Tab}"
-    Sleep 100
-    Send "{Tab}"
-    Sleep 100
-    Send "{Tab}"
-    Sleep 100
-    Send "{Tab}"
-    Sleep 100
-    Send "{Tab}"
-    Sleep 100
-    Send "{Tab}"
-    Sleep 100
-    Send "{Tab}"
-    Sleep 100
-    Send "{Enter}"
-
-    Sleep 150
-    
-    Send "{Tab}"
-    Sleep 100
-    Send "{Tab}"
-    Sleep 100
-    Send "{Tab}"
-    Sleep 100
-    Send "{Enter}"
-
-    Sleep 150
-            
-    Send "{Tab}"
-    Sleep 100
-    Send "{Tab}"
-    Sleep 100
-    Send "{Tab}"
-    Sleep 100
-    Send "{Enter}"
-
-    Sleep 150
-    
-    Send "{Tab}"
-    Sleep 100
-    Send "{Tab}"
-    Sleep 100
-    Send "{Tab}"
-    Sleep 100
-    Send "{Enter}"
-}
-
 F4::!F4 ;--> Cerrar ventana
